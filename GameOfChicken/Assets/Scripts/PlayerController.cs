@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
         {
             MovePlayer();
             SetBoundaries();
-            if(Input.GetKeyDown(KeyCode.Space))
+            if(Input.GetKeyDown(KeyCode.Space) && !isBoosted)
                 Boost();
         }
     }

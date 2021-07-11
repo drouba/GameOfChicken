@@ -9,16 +9,24 @@ public class GameManager : MonoBehaviour
 
     // game variables
     public bool gameIsActive = false;
+    private bool gameOver = false;
+    private bool selection = false;
+    public float difficulty;
 
     // UI Variables
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI maxScoreText;
+    public TextMeshProUGUI newMaxScoreText;
+    public TextMeshProUGUI endScoreText;
+    public TextMeshProUGUI difficultySelection;
+    private int maxScore = 0;
     private int score;
     public GameObject titleChicken;
 
     // spawning variables
-    private float seedSpawnRate = 5;
+    private float seedSpawnRate = 10;
     private float catSpawnRate = 1;
 
     public GameObject[] cats = new GameObject[4];
@@ -33,6 +41,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
 
     }
 
@@ -43,6 +52,31 @@ public class GameManager : MonoBehaviour
             scoreText.gameObject.SetActive(true);
         else
             scoreText.gameObject.SetActive(false);
+
+        if (!gameIsActive && !gameOver && (Input.GetKeyDown(KeyCode.Return)))
+            DifficultySelection();
+
+        if (selection && Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            difficulty = 0.25f;
+            StartGame();
+        }
+
+        if (selection && Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            difficulty = 0.5f;
+            StartGame();
+        }
+
+        if (selection && Input .GetKeyDown(KeyCode.Alpha3))
+        {
+            difficulty = 0.75f;
+            StartGame();
+        }
+
+        if (!gameIsActive && gameOver && Input.GetKeyDown(KeyCode.Return))
+            RestartGame();
+
         
     }
 
@@ -118,11 +152,10 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         gameIsActive = true;
+        gameOver = false;
         score = 0;
 
-
-        titleText.gameObject.SetActive(false);
-        titleChicken.gameObject.SetActive(false);
+        difficultySelection.gameObject.SetActive(false);
 
         StartCoroutine(CatSpawn());
         StartCoroutine(SeedSpawn());
@@ -133,16 +166,32 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         gameIsActive = false;
+        gameOver = true;
+
+        StopAllCoroutines();
+
+        if (score > maxScore)
+        {
+            maxScore = score;
+            maxScoreText.text = "Maximum score: " + maxScore;
+            newMaxScoreText.gameObject.SetActive(true);
+
+        }
+
         gameOverText.gameObject.SetActive(true);
     }
 
     public void RestartGame()
     {
-        gameIsActive = false;
-        titleText.gameObject.SetActive(true);
-        titleChicken.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(false);
+        gameIsActive = false;
+        gameOver = false;
+        selection = false;
+        titleText.gameObject.SetActive(true);
+        titleChicken.gameObject.SetActive(true); 
+        newMaxScoreText.gameObject.SetActive(false);
         DestroyAllObjects("Seeds");
+        DestroyAllObjects("Cat");
         GameObject.FindGameObjectWithTag("Player").transform.position = startPos;
         GameObject.FindGameObjectWithTag("Player").transform.rotation = startRot;
 
@@ -152,6 +201,7 @@ public class GameManager : MonoBehaviour
     {
         score += scoreToAdd;
         scoreText.text = "Score: " + score;
+        endScoreText.text = "Score: " + score;
     }
 
     void DestroyAllObjects(string tag)
@@ -162,5 +212,16 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObjects[i]);
         }
+    }
+
+    void DifficultySelection()
+    {
+        titleChicken.gameObject.SetActive(false);
+        difficultySelection.gameObject.SetActive(true);
+        titleText.gameObject.SetActive(false);
+        selection = true;
+
+     
+
     }
 }
