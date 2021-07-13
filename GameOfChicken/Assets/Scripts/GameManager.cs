@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public bool gameIsActive = false;
     private bool gameOver = false;
     private bool selection = false;
+    public bool isPaused = false;
     public float difficulty;
 
     // UI Variables
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI newMaxScoreText;
     public TextMeshProUGUI endScoreText;
     public TextMeshProUGUI difficultySelection;
+    public GameObject pauseScreen;
     private int maxScore = 0;
     private int score;
     public GameObject titleChicken;
@@ -49,9 +51,13 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (gameIsActive)
+        {
             scoreText.gameObject.SetActive(true);
+                
+        }
         else
             scoreText.gameObject.SetActive(false);
+
 
         if (!gameIsActive && !gameOver && (Input.GetKeyDown(KeyCode.Return)))
             DifficultySelection();
@@ -77,7 +83,15 @@ public class GameManager : MonoBehaviour
         if (!gameIsActive && gameOver && Input.GetKeyDown(KeyCode.Return))
             RestartGame();
 
-        
+        if (gameIsActive && Input.GetKeyDown(KeyCode.P))
+        {
+            if (!isPaused)
+                PauseGame();
+            else
+                UnPauseGame();
+        }
+
+
     }
 
     IEnumerator CatSpawn()
@@ -223,5 +237,21 @@ public class GameManager : MonoBehaviour
 
      
 
+    }
+
+    void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0;
+        pauseScreen.gameObject.SetActive(true);
+        AudioListener.pause = true;
+    }
+
+    void UnPauseGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1;
+        pauseScreen.gameObject.SetActive(false);
+        AudioListener.pause = false;
     }
 }

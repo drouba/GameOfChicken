@@ -16,7 +16,10 @@ public class MoveForward : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speed = gameManager.difficulty;
-        transform.Translate(Vector3.forward * speed);
+        if (!gameManager.isPaused)
+        {
+            speed = gameManager.difficulty;
+            transform.Translate(Vector3.forward * speed);
+        }
     }
 }

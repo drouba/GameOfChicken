@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gameManager.gameIsActive)
+        if (gameManager.gameIsActive && !gameManager.isPaused)
         {
             MovePlayer();
             SetBoundaries();
